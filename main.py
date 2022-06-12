@@ -5,23 +5,33 @@ import numpy as np
 from matplotlib import rc
 rc("text", usetex=True)"""
 
-x_range = np.linspace(start = -2, stop = 2, num = 250)
-y_range = np.linspace(start = -2, stop = 2, num = 250)
-x_vals, y_vals = np.meshgrid(x_range, y_range)
-z = x_vals + 1j*y_vals
+class ComplexFunc():
 
-FUNC = np.sin(z)/z**2
-Hx, Hy = np.real(FUNC), -1*np.imag(FUNC)
-MAG = np.absolute(FUNC)
+    def __init__(self, expression):
+        self.func_string = expression
 
-# Plotting the graph.
-plt.figure(figsize = (9, 6))
-plt.streamplot(x_vals, y_vals, Hx, Hy, density = 2.5, color = MAG, cmap = "hot", linewidth = 0.5)
-plt.axis("scaled")
+    def PolyaField(self, dimensions, density):
+        NUM = round((dimensions[1]-dimensions[0])*(dimensions[3]-dimensions[2])*density)
+        print(NUM)
+        x_range = np.linspace(start = dimensions[0], stop = dimensions[1], num = NUM)
+        y_range = np.linspace(start = dimensions[2], stop = dimensions[3], num = NUM)
+        x_vals, y_vals = np.meshgrid(x_range, y_range)
+        z = x_vals + 1j*y_vals
 
-# Adding title and labels.
-plt.title("Pòlya Field, $H$", fontsize = 24)
-plt.xlabel("$Re(z)$", fontsize = 14)
-plt.ylabel("$Im(z)$", fontsize = 14)
+        func = eval(self.func_string)
+        Hx, Hy = np.real(func), -1*np.imag(func)
 
-plt.show()
+        # Plotting the graph.
+        plt.figure(figsize = (9, 6))
+        plt.quiver(x_vals, y_vals, Hx, Hy)
+        plt.axis("scaled")
+
+        # Adding title and labels.
+        plt.title("Pòlya Field, $H$", fontsize = 24)
+        plt.xlabel("$Re(z)$", fontsize = 14)
+        plt.ylabel("$Im(z)$", fontsize = 14)
+
+        plt.show()
+
+FUNC = ComplexFunc("1/np.cos(z)")
+FUNC.PolyaField(dimensions = [-3, 3, -3, 3], density = 2)
